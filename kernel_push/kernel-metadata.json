@@ -1,0 +1,14 @@
+{
+  "id": "ziliangcok/attack-multistep-tool-attacks",
+  "title": "Attack Multistep Tool Attacks",
+  "code_file": "attack-multistep-tool-attacks.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "machine_shape": "NvidiaTeslaT4",
+  "enable_internet": false,
+  "competition_sources": ["ai-agent-security-multi-step-tool-attacks"],
+  "dataset_sources": [],
+  "kernel_sources": []
+}

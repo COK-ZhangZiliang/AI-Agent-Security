@@ -1,0 +1,31 @@
+# Python environments / caches (local only, huge)
+miniconda3/
+envs/
+.cache/
+.conda_pkgs/
+__pycache__/
+*.pyc
+
+# Kaggle credentials — NEVER commit
+.kaggle/
+**/access_token
+**/kaggle.json
+
+# Competition SDK (organizer-owned, not for redistribution)
+comp_data/
+comp_data.zip
+
+# Third-party reference notebooks (other competitors' code)
+ref_kernels/
+
+# Kaggle kernel run outputs (regenerable)
+kernel_out/
+kernel_out2/
+kernel_out3/
+kernel_out*/
+
+# Misc local artifacts
+*.zip
+
+# Token screenshot (contains credential)
+image.png
