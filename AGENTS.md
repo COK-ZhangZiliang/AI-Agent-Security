@@ -141,7 +141,11 @@ must do THREE things or submission fails:
 
 ## Status snapshot (update as it changes)
 
-- v1 submitted successfully: submission ref 53765916 (kernel v3, T4), PENDING.
+- v6 scored 36.0 (400 candidates, kernel v8). Score is LINEAR in candidate count
+  (each successful single-hop http.post exfil = 18 raw = sev5 16 + cell +2).
+- v7 submitted: 600 candidates (kernel v9, ref 53942665, PENDING). Targets ~54.
+  Cliff: 760 candidates timed out (v4/v5 -> 0); public 620-candidate solution
+  completed (~55.8). 600 sits safely inside the known-good regime.
 - Username: ziliangcok. Kernel: ziliangcok/attack-multistep-tool-attacks.
-- Next iteration (v2) levers: more guardrail-bypassing chains (sk_live_test + no
-  pre-taint), maximize unique cells via systematic carrier/url/wording enumeration.
+- Next lever if 600 completes cleanly: push toward 620-680 to approach the public
+  ceiling; the ONLY constraint is the notebook runtime cliff, not the algorithm.
