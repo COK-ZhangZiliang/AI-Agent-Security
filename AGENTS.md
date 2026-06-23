@@ -130,10 +130,24 @@ must do THREE things or submission fails:
   `email_N` style ids resolve to non-existent `msg1` and fail. Real ids: `email_0..`,
   pages `page_0..`. Verify carrier ids exist before relying on them.
 
+## Documentation upkeep (MANDATORY)
+
+- **Always update `README.md` whenever the attack approach, payload, candidate
+  count, or scoring understanding changes.** README is the public-facing summary;
+  it must never lag behind `attack.py`. Concretely, on any change that ships a new
+  submission version, update at least:
+  - the **Approach** section (current strategy & rationale),
+  - the **Results** table (add the new version + its public score once known),
+  - any **scoring/key-insight** notes that the change invalidates.
+- Keep `AGENTS.md` (engineering notes) and `README.md` (public summary) in sync:
+  AGENTS.md holds the detailed/internal reasoning, README the distilled version.
+- Do this in the SAME commit as the code change so docs and code never diverge.
+
 ## Key files in this repo
 
 - `comp_data/` — unzipped SDK (the competition "data").
-- `attack.py` — current submission algorithm (self-adapting Go-Explore).
+- `attack.py` — current submission algorithm (static single-hop exfil mass-gen).
+- `README.md` — public-facing summary; MUST be kept current (see upkeep rule).
 - `kernel_push/` — kernel-metadata.json + notebook for `kaggle kernels push`.
 - `DEEP_ANALYSIS.md` — full mechanics/scoring/strategy writeup.
 - `competition_analysis.md` — STALE: describes a different (Gray Swan IPI Arena)
