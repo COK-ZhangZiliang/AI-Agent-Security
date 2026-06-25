@@ -180,9 +180,16 @@ must do THREE things or submission fails:
   `data` would DENY any payload with a blocked keyword (token/password/secret/
   key). `sk_live_test*` is the ONLY secret pattern with none of those keywords ->
   zero public cost, protects the private cells. This is the one real headroom.
-- v10 (current): PURE single-hop, DEFAULT_TARGET=580 (safe margin under v7's 600),
-  payload sk_live_test*. Expected public ~52, locks in the score; private upside
-  from the payload. Submitting as kernel v12.
+- v10: PURE single-hop, DEFAULT_TARGET=580, payload sk_live_test* (kernel v12,
+  ref 54041627). Expected public ~52; locks in the score after v8/v9 timeouts.
+- v11 (current): the ONE open lever from the "cap per-step output length" note.
+  Replay is locked at max_tool_hops=8, so single-hop costs ~2 generations (call +
+  wasted wrap-up). Attacker only controls wording -> each message now tells the
+  model to reply with the single token "done" after the call, shrinking the
+  wasted wrap-up generation. Cheaper per candidate => push count to 620 (just
+  past v7's safe 600) to convert the saving into score (~56). Same predicate /
+  cell / payload; pure wording change. If 620 still times out, the wording lever
+  was insufficient -> fall back to <=580. Submitting as kernel v13.
 - Username: ziliangcok. Kernel: ziliangcok/attack-multistep-tool-attacks.
-- Next lever: public is maxed; remaining upside is PRIVATE only (payload). If a
-  future idea can cap model per-step output length, multi-hop could be revisited.
+- Next lever: if v11 lands >54, keep nudging the count up (the wrap-up is now
+  cheap); the remaining structural upside is PRIVATE only (sk_live_test payload).
