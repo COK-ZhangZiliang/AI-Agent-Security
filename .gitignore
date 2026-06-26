@@ -29,3 +29,4 @@ kernel_out*/
 
 # Token screenshot (contains credential)
 image.png
+.ext_kernels/
