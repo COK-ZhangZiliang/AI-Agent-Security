@@ -30,3 +30,10 @@ kernel_out*/
 # Token screenshot (contains credential)
 image.png
 .ext_kernels/
+
+# Old SDK backup (kept locally for diffing only)
+.comp_data_310_backup/
+
+# Local pull-downs and old run artifacts
+v4_out/
+logs/
