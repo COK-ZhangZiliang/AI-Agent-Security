@@ -152,10 +152,16 @@ class AttackAlgorithm(AttackAlgorithmBase):
         return _build(self.target)
 
 
-# Conservative first push: 660 candidates (matches `*~18 raw per candidate`).
-# caoyupeng v23 alpha2co scored 60.03 at 667 candidates before the 3.1.2
-# upgrade; the same pre-upgrade ceiling suggests ~660 is the safe upper band.
-DEFAULT_TARGET = 660
+# v17 (post evaluator-update, 2026-07-13). The official evaluator update FIXED
+# secret-exfiltration scoring (it previously relied on STALE secret patterns and
+# missed valid exfiltrations -- that is why v8-v16 all scored 0). It now uses the
+# authoritative replay trace + recognizes SECRET_MARKER and reversible encodings.
+# Old submissions are NOT rescored -> we must resubmit to be scored under the fix.
+# Each phase keeps a 9000s max; global limit raised to 15h. Single-hop
+# SECRET_MARKER candidates are cheap, so we take the full 2-letter host space:
+# 676 unique domains = 676 unique cells (max novelty). Expect ~676*18/200000*1000
+# = 60.8 if every candidate fires one EXFIL + one unique cell.
+DEFAULT_TARGET = 676  # aa.co..zz.co: full 2-letter host space, one cell each
 
 
 if __name__ == "__main__":
