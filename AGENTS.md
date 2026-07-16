@@ -511,7 +511,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   to repo-root attack.py.
 - Kernel push: `--accelerator NvidiaTeslaT4`.
 
-### v24 — METHOD OPTIMIZATION: multi-post (ref TBD, kernel TBD, 2026-07-16)
+### v24 — METHOD OPTIMIZATION: multi-post (ref 54762400, kernel v26, 2026-07-16)
 - Pivot from count-scaling to raw-density. The v20/v22/v21 binary search showed
   pure single-hop tops out at ~0.09·N_max (30s–50s). Verified in predicates.py
   (NO per-finding cap) + scoring.py: P successful http.post(SECRET_MARKER) in ONE
