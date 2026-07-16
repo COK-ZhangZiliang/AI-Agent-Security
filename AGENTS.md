@@ -468,7 +468,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
 - Caveat: the exact wall position and per-candidate generation count are not
   locally observable (no rerun log); the bracket is empirical from v20/v21.
 
-### v22 — BINARY-SEARCH the wall (ref TBD, kernel TBD, 2026-07-16): 610 candidates
+### v22 — BINARY-SEARCH the wall (ref 54755276, kernel v24, 2026-07-16): 610 candidates
 - Bisect the (120, 1100] timeout bracket at the midpoint N=610. Change ONLY
   DEFAULT_TARGET (1100→610); 3-letter host scheme + early-stop wording unchanged.
   Predicted ≈54.9 if it completes (also beats v7's old 54.0).
