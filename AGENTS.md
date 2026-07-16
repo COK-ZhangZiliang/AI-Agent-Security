@@ -143,11 +143,32 @@ must do THREE things or submission fails:
   AGENTS.md holds the detailed/internal reasoning, README the distilled version.
 - Do this in the SAME commit as the code change so docs and code never diverge.
 
+## Git commit & push rules (MANDATORY)
+
+- **`GIT-RULES.md` (repo root) is the authoritative git-commit constraint for this
+  repo.** Follow it for every commit: branch naming, Conventional-Commits message
+  format (`<type>(<scope>): <subject>`), one logical change per commit (split
+  unrelated feat/fix/refactor/test/docs), explicit-path staging (no `git add -A` /
+  `git add .`), the never-commit list (secrets, caches, outputs, model/data
+  artifacts), and pre-commit verification. When it conflicts with older habits,
+  `GIT-RULES.md` wins.
+- **Author identity:** if `user.name`/`user.email` are unset locally, use the
+  repo-local fallback from `GIT-RULES.md` (`ziliang` /
+  `ziliangzhangcok@gmail.com`); do not touch global identity.
+- **Push after every commit.** After each user/maintainer-requested commit, push
+  it to the configured remote (`git push origin <branch>`) — unless the user
+  explicitly says to keep it local or no remote exists. Confirm the branch and
+  remote target are correct before pushing.
+- This repo's docs-in-the-same-commit rule (above) still applies; it composes with
+  `GIT-RULES.md`'s one-logical-change rule (docs that document a code change ship
+  with that change).
+
 ## Key files in this repo
 
 - `comp_data/` — unzipped SDK (the competition "data").
 - `attack.py` — current submission algorithm (static single-hop exfil mass-gen).
 - `README.md` — public-facing summary; MUST be kept current (see upkeep rule).
+- `GIT-RULES.md` — authoritative git commit/push constraint (see Git rules above).
 - `kernel_push/` — kernel-metadata.json + notebook for `kaggle kernels push`.
 - `DEEP_ANALYSIS.md` — full mechanics/scoring/strategy writeup.
 - `competition_analysis.md` — STALE: describes a different (Gray Swan IPI Arena)
