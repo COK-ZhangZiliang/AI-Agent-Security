@@ -499,7 +499,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   structurally cheaper per-candidate trace (guaranteed strictly-1-hop) or a
   higher-severity / multi-predicate mix — flagged for after the wall is pinned.
 
-### v23 — BINARY-SEARCH cont. (ref TBD, kernel TBD, 2026-07-16): 350 candidates
+### v23 — BINARY-SEARCH cont. (ref 54760562, kernel v25, 2026-07-16): 350 candidates
 - Bisect (120, 610] at N=350 (→≈31.5; a touch under the true midpoint 365 to favor
   completing and bank a ~3× jump over the 11.105 best). Change ONLY DEFAULT_TARGET;
   3-letter hosts + early-stop wording held fixed.
