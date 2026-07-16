@@ -449,6 +449,25 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
 - Kernel push: `--accelerator NvidiaTeslaT4`. Submit via
   `competition_submit_code(... kernel='ziliangcok/attack-multistep-tool-attacks')`.
 
+### v21 RESULT (checked 2026-07-16) — BLANK → 1100 HIT THE TIMEOUT WALL
+- v21 (ref 54751250, kernel v23, 1100 single-hop) → **blank** publicScore, status
+  COMPLETE. This is the predicted "BLANKS" branch: 1100 generations/phase exceeded
+  the 9000 s/phase deadline → `INVALID_SUBMISSION` → no score row. The 11.105 best
+  (v20) is unaffected.
+- Confirmed bracket for the early-stop-wording timeout wall: **(120, 1100]**.
+  v20 @120 fit (COMPLETE); v21 @1100 did not. score = 0.09·N, so the reachable
+  ceiling equals 0.09 × (largest N that completes).
+- **NEXT STEP — binary-search the wall.** Midpoint of (120, 1100] ≈ 610 (→ ≈54.9,
+  which also beats v7's old 54.0). Change ONLY DEFAULT_TARGET, keep 3-letter hosts
+  + early-stop wording. Decision tree:
+  * next @~600 COMPLETES → wall in (600, 1100]; push toward ~850.
+  * next @~600 BLANKS → wall in (120, 600]; drop toward ~350.
+  Converge on the largest N that scores. Realistic ceiling for THIS single-hop
+  approach ≈ 0.09 × N_max; to exceed that we'd need lower per-candidate cost
+  (fewer generations) or a higher-severity predicate mix — not just more count.
+- Caveat: the exact wall position and per-candidate generation count are not
+  locally observable (no rerun log); the bracket is empirical from v20/v21.
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.

@@ -164,7 +164,16 @@ Iterative submissions, learning what actually moves the score:
 | v18 | Diagnostic: `SECRET_MARKER`, 120 candidates (isolate replay-timeout) | blank (no score) |
 | v19 | Diagnostic #2: `SECRET_MARKER`, **5 candidates** (raise-vs-timeout separator) | **0.450** |
 | v20 | Lever test: **early-stop wording** @120 (cut hops 8→~2 to lift count ceiling) | **11.105** |
-| v21 | 90+ push: **3-letter host scheme + 1100 candidates** (single-hop, ≈99 predicted) | *pending* |
+| v21 | 90+ push: **3-letter host scheme + 1100 candidates** (single-hop, ≈99 predicted) | blank (timeout) |
+
+> **v21 blanked (2026-07-16): 1100 candidates hit the per-phase timeout wall.** As
+> flagged, ~1100 model generations/phase exceeded the 9000 s deadline →
+> `INVALID_SUBMISSION` → no score (the 11.105 best stands). This brackets the
+> early-stop-wording timeout wall to **(120, 1100]**. Since score = `0.09 × N`, the
+> reachable ceiling of this single-hop approach is `0.09 × N_max`. **Next: binary-
+> search N** (change only the count) — midpoint ≈610 (→≈54.9), then converge on the
+> largest N that completes. Going beyond that needs lower per-candidate cost or a
+> higher-severity predicate mix, not just more count.
 
 > **Lever confirmed (2026-07-15): v20 = 11.105 at the SAME count (120) that blanked
 > under the old wording (v18).** The only change was the message: from a looping-prone
