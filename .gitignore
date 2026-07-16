@@ -23,6 +23,7 @@ kernel_out/
 kernel_out2/
 kernel_out3/
 kernel_out*/
+.kout*/
 
 # Misc local artifacts
 *.zip
