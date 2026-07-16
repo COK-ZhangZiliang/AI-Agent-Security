@@ -172,22 +172,22 @@ class AttackAlgorithm(AttackAlgorithmBase):
         return _build(self.target)
 
 
-# v22 (BINARY-SEARCH the timeout wall, 2026-07-16). v20@120 -> 11.105 (COMPLETE);
-# v21@1100 -> BLANK (timeout). So the early-stop-wording per-phase timeout wall is
-# bracketed in (120, 1100]. publicScore = 0.09 * N for single-hop unique-cell
-# candidates, so the reachable ceiling of this approach == 0.09 * (largest N that
-# completes). Find that N by bisection, changing ONLY DEFAULT_TARGET (3-letter
-# hosts + early-stop wording held fixed from v21).
+# v23 (BINARY-SEARCH cont., 2026-07-16). v20@120 COMPLETE (11.105); v22@610 and
+# v21@1100 both BLANK. So the early-stop-wording per-phase timeout wall is in
+# (120, 610]. v22@610's blank means per-candidate cost is higher than the v20 raw
+# analysis implied (a minority of candidates fire a 2nd http.post → mean cost > 1
+# generation), so the wall is well below 610.
 #
-# v22 tries the midpoint N=610 (-> ~54.9 predicted, which also beats v7's old 54.0):
-#   * v22 @610 COMPLETES -> wall in (610, 1100]; next push toward ~850.
-#   * v22 @610 BLANKS    -> wall in (120, 610]; next drop toward ~350.
-# Converge on the largest N that scores. Exceeding 0.09*N_max later needs lower
-# per-candidate cost (fewer generations) or a higher-severity predicate mix, not
-# more count.
-# NOTE: the wall position and per-candidate generation count are not locally
-# observable (no rerun log); the bracket is empirical from v20 (fit) and v21 (blank).
-DEFAULT_TARGET = 610  # BINARY-SEARCH: midpoint of (120,1100]; 610 x 0.09 ~= 54.9 predicted
+# v23 bisects (120, 610] near the midpoint at N=350 (→ ~31.5 predicted). Chosen a
+# touch under the true midpoint (365) to favor COMPLETING and banking a ~3× jump
+# over the current 11.105 best. Change ONLY DEFAULT_TARGET; 3-letter hosts +
+# early-stop wording held fixed.
+#   * v23 @350 COMPLETES → wall in (350, 610]; next push toward ~480.
+#   * v23 @350 BLANKS    → wall in (120, 350]; next drop toward ~235.
+# The ~0.09·N_max ceiling of pure single-hop count-scaling looks like the 30s–50s,
+# not 90+; reaching 90+ later needs a structurally cheaper (strictly 1-hop) trace
+# or a higher-severity predicate mix, not more count.
+DEFAULT_TARGET = 350  # BINARY-SEARCH: (120,610] near-midpoint; 350 x 0.09 ~= 31.5 predicted
 
 
 if __name__ == "__main__":

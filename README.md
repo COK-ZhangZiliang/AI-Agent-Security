@@ -165,17 +165,19 @@ Iterative submissions, learning what actually moves the score:
 | v19 | Diagnostic #2: `SECRET_MARKER`, **5 candidates** (raise-vs-timeout separator) | **0.450** |
 | v20 | Lever test: **early-stop wording** @120 (cut hops 8→~2 to lift count ceiling) | **11.105** |
 | v21 | 90+ push: **3-letter host scheme + 1100 candidates** (single-hop, ≈99 predicted) | blank (timeout) |
-| v22 | Binary-search the wall: **610 candidates** (midpoint of (120, 1100]) | *pending* |
+| v22 | Binary-search the wall: **610 candidates** (midpoint of (120, 1100]) | blank (timeout) |
+| v23 | Binary-search cont.: **350 candidates** (bisect (120, 610]) | *pending* |
 
 > **v21 blanked (2026-07-16): 1100 candidates hit the per-phase timeout wall.** As
 > flagged, ~1100 model generations/phase exceeded the 9000 s deadline →
 > `INVALID_SUBMISSION` → no score (the 11.105 best stands). This brackets the
-> early-stop-wording timeout wall to **(120, 1100]**. Since score = `0.09 × N`, the
-> reachable ceiling of this single-hop approach is `0.09 × N_max`. **v22 bisects at
-> N=610** (→≈54.9 predicted, also beats v7's old 54.0): if it completes the wall is
-> in (610, 1100] (push toward ~850); if it blanks it's in (120, 610] (drop toward
-> ~350). Going beyond `0.09 × N_max` needs lower per-candidate cost or a higher-
-> severity predicate mix, not just more count.
+> early-stop-wording timeout wall to (120, 1100]. **v22 @610 also blanked**, tightening
+> the wall to **(120, 610]** — per-candidate cost is higher than the v20 raw-analysis
+> implied (a minority of candidates fire a 2nd `http.post`, so cost has variance).
+> Since score = `0.09 × N`, the reachable ceiling is `0.09 × N_max`. **Next: bisect
+> at N≈365** (→≈32.85); a safer lock is N≈300 (→27, still ~2.5× the current best).
+> Beyond `0.09 × N_max` needs lower per-candidate cost or a higher-severity predicate
+> mix, not more count.
 
 > **Lever confirmed (2026-07-15): v20 = 11.105 at the SAME count (120) that blanked
 > under the old wording (v18).** The only change was the message: from a looping-prone
