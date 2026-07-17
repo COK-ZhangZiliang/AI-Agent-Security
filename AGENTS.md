@@ -548,7 +548,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
 - The multi-post *idea* is right (P posts = P EXFIL, no per-finding cap); the
   *delivery* was wrong — separate early-stop messages pay the stop tax P times.
 
-### v25 — METHOD FIX: single-message loop-to-8 (ref TBD, kernel TBD, 2026-07-17)
+### v25 — METHOD FIX: single-message loop-to-8 (ref 54775451, kernel v27, 2026-07-17)
 - Eliminate the stop tax. sandbox.py:223 runs `for hop_idx in range(max_tool_hops)`
   (=8) and exits after the last hop with NO trailing generation. So ONE message
   driving 8 http.post calls costs 8 generations for 8 EXFIL = 130 raw = 16.25
