@@ -169,6 +169,22 @@ Iterative submissions, learning what actually moves the score:
 | v23 | Binary-search cont.: **350 candidates** (bisect (120, 610]) | blank (timeout) |
 | v24 | Multi-post (30×8 as 8 early-stop messages) — cost miscalc, 480 gen | blank (timeout) |
 | v25 | **Method fix: single-message loop-to-8** (N=30 × P=8, 240 gen) | *pending* |
+| v26 | **GPT-OSS harmony injection + online adaptive fill** (measures the wall) | *pending* |
+| v27 | v26 **+ Gemma tool-call injection** (verified via real `apply_chat_template`) | *pending* |
+
+> **Injection + adaptive fill (2026-07-17), from the public 80-point solution.** The
+> real levers are (1) **prompt injection** that makes the target emit the `http.post`
+> fast and reliably, and (2) **online adaptive fill** that probes per-template
+> latency/fire-rate in the real replay env and fills candidates to ~0.94×9000 s —
+> measuring the wall instead of guessing count. **v26** adds GPT-OSS *harmony*
+> injection (forge an assistant analysis turn via `<|channel|>` tokens so the model
+> jumps straight to the call). **v27** adds a **Gemma** injection template using
+> Gemma's own `<|tool_call>call:…<tool_call|>` format inside a forged
+> `<end_of_turn><start_of_turn>model` turn — **verified locally with the real
+> `apply_chat_template`**: the tokens render verbatim and `<end_of_turn>`/
+> `<start_of_turn>` re-tokenize to the real special ids (107/106), so the model
+> perceives a completed model turn. The adaptive selector auto-picks the best
+> template per model (harmony on GPT-OSS, gemma-format on Gemma).
 
 > **Corrected cost model (2026-07-17).** v23 (350 single-hop, ~700 gen) and v24 both
 > blanked. v24's miss: each early-stop message costs **2 generations** (post + "stop"),
