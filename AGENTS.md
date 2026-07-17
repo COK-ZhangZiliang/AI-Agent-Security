@@ -643,7 +643,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   no torch) is enough to verify chat-template rendering offline; caches under
   `.cache/` (git-ignored).
 
-### v26 — GPT harmony injection + adaptive fill (ref TBD, kernel TBD, 2026-07-17)
+### v26 — GPT harmony injection + adaptive fill (ref 54777159, kernel v28, 2026-07-17)
 - Full rewrite of attack.py to the adaptive-fill architecture (adapted from the
   public 80-pt solution; templates + docs are ours). run() probes each template's
   fire-rate + latency in the REAL replay env, selects max raw-per-second, then
