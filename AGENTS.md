@@ -660,7 +660,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   (harmony fires fast → many candidates fit → tens of points). gemma cells get only
   the plain fallback here (no gemma injection yet → v27).
 
-### v27 — v26 + Gemma tool-call injection (ref TBD, kernel TBD, 2026-07-17)
+### v27 — v26 + Gemma tool-call injection (ref 54777255, kernel v29, 2026-07-17)
 - Adds two Gemma templates to the same TEMPLATES tuple. The gateway calls run()
   SEPARATELY per model, so the per-template probe/selection auto-picks harmony on
   gpt_oss and the gemma-format template on gemma — one attack.py covers both.
