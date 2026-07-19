@@ -168,9 +168,27 @@ Iterative submissions, learning what actually moves the score:
 | v22 | Binary-search the wall: **610 candidates** (midpoint of (120, 1100]) | blank (timeout) |
 | v23 | Binary-search cont.: **350 candidates** (bisect (120, 610]) | blank (timeout) |
 | v24 | Multi-post (30×8 as 8 early-stop messages) — cost miscalc, 480 gen | blank (timeout) |
-| v25 | **Method fix: single-message loop-to-8** (N=30 × P=8, 240 gen) | *pending* |
-| v26 | **GPT-OSS harmony injection + online adaptive fill** (measures the wall) | *pending* |
-| v27 | v26 **+ Gemma tool-call injection** (verified via real `apply_chat_template`) | *pending* |
+| v25 | Method fix: single-message loop-to-8 (N=30 × P=8, 240 gen) | 3.940 |
+| v26 | GPT-OSS harmony injection + online adaptive fill (measures the wall) | blank |
+| v27 | v26 **+ Gemma tool-call injection** (verified via real `apply_chat_template`) | **80.265** |
+
+> **BREAKTHROUGH — v27 = 80.265 (2026-07-19).** From 11.105 → 80.265, a ~7× jump.
+> The two levers (from the public 80-pt solution) plus our verified Gemma injection:
+> (1) **prompt injection** forges a model turn so the target emits `http.post` fast
+> and reliably; (2) **online adaptive fill** probes per-template latency/fire-rate in
+> the real replay env and fills to ~0.94×9000 s (measures the wall instead of
+> guessing count). v27 auto-selects harmony on GPT-OSS and Gemma's own
+> `<|tool_call>call:…<tool_call|>` format on Gemma.
+>
+> **Anomaly worth noting:** v26 (harmony only, a strict *subset* of v27) blanked,
+> while v27 (harmony + Gemma) scored 80.265. Best explanation (not confirmable
+> without the rerun log): with no Gemma-specific template, v26's fill on the Gemma
+> phase ran slow/unreliable fallbacks and overran the 9000 s/phase deadline →
+> `INVALID_SUBMISSION` → whole-submission blank. The dedicated Gemma injection in
+> v27 made the Gemma phase fast+reliable, so it not only added Gemma-cell points but
+> likely *saved the submission from timing out*. Earlier lesson stands: multi-post
+> loop (v25) only reached 3.94 (~6% of its 19.5 theoretical), because real models
+> won't reliably repeat a tool call 8× — injection (forge the turn) is what works.
 
 > **Injection + adaptive fill (2026-07-17), from the public 80-point solution.** The
 > real levers are (1) **prompt injection** that makes the target emit the `http.post`
