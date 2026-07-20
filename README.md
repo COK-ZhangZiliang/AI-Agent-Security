@@ -171,7 +171,19 @@ Iterative submissions, learning what actually moves the score:
 | v25 | Method fix: single-message loop-to-8 (N=30 × P=8, 240 gen) | 3.940 |
 | v26 | GPT-OSS harmony injection + online adaptive fill (measures the wall) | blank |
 | v27 | v26 **+ Gemma tool-call injection** (verified via real `apply_chat_template`) | **80.265** |
-| v28 | **Control: harmony-only + `MAX_CANDIDATES=150`** (isolate v26's blank cause) | *pending* |
+| v28 | Control: harmony-only + `MAX_CANDIDATES=150` (isolate v26's blank cause) | 13.500 |
+
+> **Control verdict (2026-07-20): v28 = 13.500, exactly `150 × 18 / 200`.** Harmony-only
+> capped at 150 candidates COMPLETES and scores — so the GPT-OSS/harmony side does
+> **not** time out and does score. This **refutes** the "harmony timed out" theory:
+> v26's blank was its **uncapped fill overrunning the deadline** (harmony is inert on
+> Gemma, so the fill spun on slow fallbacks there), not a harmony problem. It also
+> shows v27's 80.265 is **not** all-Gemma — GPT-OSS harmony is a real contributor;
+> the jump from 13.5 (capped 150) to 80.265 comes from (a) the uncapped adaptive fill
+> packing in far more candidates and (b) the Gemma cells the Gemma injection unlocked.
+> Robustness insight: "capped + harmony-only" is a safe ~13.5 floor that never blanks;
+> a future **capped** variant of v27 could keep the high score while removing the
+> occasional-timeout blank risk.
 
 > **BREAKTHROUGH — v27 = 80.265 (2026-07-19).** From 11.105 → 80.265, a ~7× jump.
 > The two levers (from the public 80-pt solution) plus our verified Gemma injection:
