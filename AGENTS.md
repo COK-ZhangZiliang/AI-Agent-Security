@@ -711,7 +711,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
     ruleset; injection that fires there is pure upside and likely counts toward rank.
 - Username/kernel unchanged; v27 kernel = v29, ref 54777255.
 
-### v28 — CONTROL: harmony-only + capped fill (ref TBD, kernel TBD, 2026-07-20)
+### v28 — CONTROL: harmony-only + capped fill (ref 54844596, kernel v30, 2026-07-20)
 - Purpose: discriminate why v26 (harmony-only, uncapped) BLANKED while its superset
   v27 (harmony + Gemma) scored 80.265. Two theories:
   (A) Gemma replay phase overran 9000 s (harmony inert on Gemma + uncapped fill spun
