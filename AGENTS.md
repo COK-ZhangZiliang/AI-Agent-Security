@@ -711,6 +711,34 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
     ruleset; injection that fires there is pure upside and likely counts toward rank.
 - Username/kernel unchanged; v27 kernel = v29, ref 54777255.
 
+### v28 — CONTROL: harmony-only + capped fill (ref TBD, kernel TBD, 2026-07-20)
+- Purpose: discriminate why v26 (harmony-only, uncapped) BLANKED while its superset
+  v27 (harmony + Gemma) scored 80.265. Two theories:
+  (A) Gemma replay phase overran 9000 s (harmony inert on Gemma + uncapped fill spun
+      on slow fallbacks) — my hypothesis.
+  (B) the GPT-OSS/harmony side itself timed out — the user's hypothesis.
+- Code facts that frame it (verified): model order is gpt_oss THEN gemma; ANY phase
+  timeout raises INVALID_SUBMISSION → whole-submission blank (one-vote-veto);
+  candidates are generated PER model inside the loop. Also: the reference 80-pt
+  solution has NO Gemma injection yet scored 80 → GPT-OSS harmony alone carries most
+  of the score, which already argues AGAINST (B) and against "v27's 80 is all Gemma".
+- v28 = harmony-only (identical templates to v26) BUT MAX_CANDIDATES=150 (hard cap
+  keeping replay well under the deadline on both models; v20 fit ~240 single-hop gen).
+  Removes the timeout confound.
+  * v28 SCORES → harmony works, carries points; v26 blank was the uncapped fill
+    overrunning (most likely Gemma). Refutes (B).
+  * v28 BLANKS → even bounded harmony-only blanks → supports (B); v27's 80 is mostly
+    the Gemma templates.
+- Could NOT get the 4-cell split from artifacts first: `kaggle kernels output` only
+  returns the COMMIT-phase placeholder (submission.csv 4×0.0), no rerun
+  submission_details.json, and no per-version log. So this online control is the
+  only discriminator available.
+- Local checks: compiles; 5 harmony/fallback templates (no gemma); all carry
+  SECRET_MARKER; guardrail ALLOW; MAX_CANDIDATES=150 enforced at runtime.
+- Kernel push: `--accelerator NvidiaTeslaT4`. NOTE: pushing v28 overwrites the v27
+  kernel (v29); v27's 80.265 submission already stands on the leaderboard, so the
+  best score is preserved regardless of v28's outcome.
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.

@@ -171,6 +171,7 @@ Iterative submissions, learning what actually moves the score:
 | v25 | Method fix: single-message loop-to-8 (N=30 × P=8, 240 gen) | 3.940 |
 | v26 | GPT-OSS harmony injection + online adaptive fill (measures the wall) | blank |
 | v27 | v26 **+ Gemma tool-call injection** (verified via real `apply_chat_template`) | **80.265** |
+| v28 | **Control: harmony-only + `MAX_CANDIDATES=150`** (isolate v26's blank cause) | *pending* |
 
 > **BREAKTHROUGH — v27 = 80.265 (2026-07-19).** From 11.105 → 80.265, a ~7× jump.
 > The two levers (from the public 80-pt solution) plus our verified Gemma injection:
