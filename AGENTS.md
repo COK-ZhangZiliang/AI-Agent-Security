@@ -760,7 +760,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   the blank risk. Also: the fill's fallback on a model where injection is inert is
   the danger zone — consider detecting low fire-rate early and stopping the fill.
 
-### v29 — v27 + SAFETY hardening (ref TBD, kernel TBD, 2026-07-20)
+### v29 — v27 + SAFETY hardening (ref 54847675, kernel v31, 2026-07-20)
 - Implements the robustness idea above. Base = v27 verbatim (harmony + Gemma
   injection + adaptive fill); adds three insurance mechanisms, each only ever
   reduces blank risk (never lowers a healthy score):
