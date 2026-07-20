@@ -760,6 +760,34 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   the blank risk. Also: the fill's fallback on a model where injection is inert is
   the danger zone — consider detecting low fire-rate early and stopping the fill.
 
+### v29 — v27 + SAFETY hardening (ref TBD, kernel TBD, 2026-07-20)
+- Implements the robustness idea above. Base = v27 verbatim (harmony + Gemma
+  injection + adaptive fill); adds three insurance mechanisms, each only ever
+  reduces blank risk (never lowers a healthy score):
+  1. EARLY-ABORT (`MIN_FILL_FIRE_RATE=0.5`): after probing, if the selected
+     template's fire-rate < 0.5, injection is inert on THIS model (v26's Gemma
+     case) → skip the fill loop, return only what already fired. This is the
+     DIRECT fix for v26's blank (spinning slow fallbacks to the deadline).
+     Locally verified: on the deterministic agent (injection inert) run() aborts
+     in 0.0 s with do_fill=False instead of burning the 60 s test budget.
+  2. REPLAY_SAFE 0.94 → 0.85: run()'s time_budget_s is the GENERATION budget only
+     (confirmed remote_env.py:133 AttackRunConfig(time_budget_s=budget_s)); the
+     gateway then runs a SEPARATE replay phase per guardrail (each 9000 s). The
+     extra 9% slack leaves room so the generation-sized candidate set also fits
+     replay.
+  3. MAX_CANDIDATES 2000 → 1200: backstop above v28's proven-safe 150 and likely
+     above v27's actual packed count, so it should not bite ~80 but caps the tail.
+- Local checks: compiles; 7 templates incl. both Gemma; Gemma template still
+  survives real apply_chat_template (forged model turn, payload present);
+  early-abort verified; constants wired (REPLAY_SAFE=0.85, MAX_CANDIDATES=1200,
+  MIN_FILL_FIRE_RATE=0.5). Notebook cell2 byte-identical to attack.py.
+- Expected: v29 ≈ 80 and never blanks. If v29 < 80, a safety knob is too
+  conservative (early-abort threshold too high, or REPLAY_SAFE/cap biting) →
+  loosen. If v29 blanks, the timeout source is elsewhere than the fill loop.
+- v27's 80.265 already stands on the leaderboard; pushing v29 overwrites the
+  kernel but cannot lower the recorded best.
+- Kernel push: `--accelerator NvidiaTeslaT4`.
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.
