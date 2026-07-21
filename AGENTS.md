@@ -834,7 +834,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   cannot lower the recorded best.
 - Kernel push: `--accelerator NvidiaTeslaT4`.
 
-### v31 — 90+ PUSH: fused levers (ref TBD, kernel TBD, 2026-07-21)
+### v31 — 90+ PUSH: fused levers (ref 54871276, kernel v33, 2026-07-21)
 - Studied two public high-scorers and fused their levers onto our injection engine:
   * haodou/conservative-replay-safe-sizing: NO injection, 3 plain templates, but
     (a) selects by EFFECTIVE COST = median_latency/fire_rate (time per successful
