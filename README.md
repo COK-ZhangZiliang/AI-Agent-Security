@@ -173,6 +173,15 @@ Iterative submissions, learning what actually moves the score:
 | v27 | v26 **+ Gemma tool-call injection** (verified via real `apply_chat_template`) | **80.265** |
 | v28 | Control: harmony-only + `MAX_CANDIDATES=150` (isolate v26's blank cause) | 13.500 |
 | v29 | **v27 + safety** (early-abort on inert injection, `REPLAY_SAFE`0.85, cap 1200) | 75.825 |
+| v30 | v29 + **per-candidate charged replay accounting** (`×1.03+0.05`, cap 0.99) | *pending* |
+
+> **v30 recovers the haircut (2026-07-21).** v29 proved the safety works (no blank) but
+> its blunt flat `REPLAY_SAFE`=0.85 cost ~4.4 points. v30 keeps the early-abort but
+> replaces the flat haircut with **per-candidate charged accounting** (from the public
+> `tetsutani/adaptive-tool-call-throughput` solution): `charge = elapsed×1.03 + 0.05`,
+> ledger cap `0.99×9000 = 8910`. This models real per-candidate replay cost instead of
+> scaling everything down 15%, so the fill packs to a true budget. Expected: recover
+> toward ~80 while keeping the no-blank safety.
 
 > **v29 = 75.825 (2026-07-21): no-blank goal achieved, but ~4.4 below v27.** v29
 > completed reliably (the safety mechanisms work — no blank), confirming v26's blank

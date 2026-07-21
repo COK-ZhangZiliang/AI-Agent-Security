@@ -811,6 +811,29 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   is lower priority (unproven at high score, adds complexity).
 - Best recorded score remains v27 = 80.265 (still on the leaderboard).
 
+### v30 — per-candidate charged replay accounting (ref TBD, kernel TBD, 2026-07-21)
+- Implements the v29 NEXT step. Keeps v29's early-abort (MIN_FILL_FIRE_RATE=0.5,
+  cheap insurance that never costs score) but REPLACES the blunt REPLAY_SAFE=0.85
+  flat haircut with per-candidate charged accounting (borrowed from tetsutani):
+    _charged_replay_cost(elapsed) = max(1e-4, elapsed) * 1.03 + 0.05
+    replay_cap = 0.99 * 9000 = 8910
+  The fill loop now accumulates CHARGED cost (bank-seed + fill + the while guard all
+  use _charged_replay_cost), so it packs candidates to a true per-candidate budget
+  instead of scaling the whole set down 15%.
+- Rationale: v29's 75.825 ~= 80.265 * 0.94 confirmed the flat haircut was the sole
+  cost. Charged accounting models replay being slightly slower (x1.03) + fixed
+  per-candidate overhead (+0.05), letting REPLAY_SAFE run 0.99 without overrunning.
+- Local checks: compiles; charged model correct (charge(1.0s)=1.08, charge(0)=0.05,
+  cap=8910); 7 templates incl. both Gemma; early-abort STILL aborts in 0.0 s on the
+  inert deterministic agent (safety preserved); Gemma template unchanged from v27.
+  Notebook cell2 byte-identical to attack.py.
+- Expected: v30 ~= 80 AND no blank. If v30 < ~78, the x1.03/+0.05 charge is too
+  loose for the real replay (bump the factor); if v30 blanks, replay is materially
+  slower than generation (raise REPLAY_COST_FACTOR or lower REPLAY_SAFE).
+- Best recorded score remains v27 = 80.265; pushing v30 overwrites the kernel but
+  cannot lower the recorded best.
+- Kernel push: `--accelerator NvidiaTeslaT4`.
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.
