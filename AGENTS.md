@@ -834,6 +834,35 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   cannot lower the recorded best.
 - Kernel push: `--accelerator NvidiaTeslaT4`.
 
+### v31 — 90+ PUSH: fused levers (ref TBD, kernel TBD, 2026-07-21)
+- Studied two public high-scorers and fused their levers onto our injection engine:
+  * haodou/conservative-replay-safe-sizing: NO injection, 3 plain templates, but
+    (a) selects by EFFECTIVE COST = median_latency/fire_rate (time per successful
+    fire), (b) tighter margins MARGIN_S=45 / MARGIN_MULT=1.20, (c) aggressive
+    REPLAY_SAFE=0.994. Proves plain templates fire reliably on BOTH models.
+  * tetsutani: per-candidate charged accounting (already in our v30).
+  * ours v27: injection makes GPT-OSS fast (=80.265).
+- v31 changes vs v30 (all additive, injection engine unchanged):
+  1. Template selection: raw-per-second -> _effective_cost (median_latency/fire_rate),
+     minimized. Picks the cheapest-per-fire template per model.
+  2. MARGIN_S 60->45, MARGIN_MULT 1.35->1.20 (reclaim generation-phase reserve).
+  3. REPLAY_SAFE 0.99->0.994 (safe because v30's charged accounting is precise).
+  4. PROBE_REPS 3->5 (steadier fire-rate/latency estimate).
+  5. Keep v29 early-abort (MIN_FILL_FIRE_RATE=0.5) + all 7 templates.
+- Local checks: compiles; _effective_cost unit-correct (5x1s/5=1.0, 5x2s/5=2.0,
+  1-fire/5=2.5, 0-fire=inf); constants wired (45/1.20/5/0.994, cap 8946); early-abort
+  still aborts fast on inert agent; 7 templates render; notebook byte-identical.
+- Rationale for 90+: injection = fastest/most-reliable fires; effective-cost select =
+  cheapest per fire; aggressive charged sizing = pack fill to a true budget. These are
+  incremental optimizations over our 80, not a new mechanism — realistic landing is
+  80-90, 90+ is the stretch. v27's 80.265 stands regardless (kernel overwrite can't
+  lower the recorded best).
+- Expected reads: v31 > 80 -> fused levers help, keep tuning (push REPLAY_SAFE / more
+  injection variants); v31 ~= 80 -> effective-cost/sizing neutral at our scale, the
+  binding limit is elsewhere (real per-candidate latency); v31 < 80 or blank -> a
+  knob too aggressive (0.994 or 45 s margin), back off toward v30.
+- Kernel push: `--accelerator NvidiaTeslaT4`.
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.

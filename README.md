@@ -174,6 +174,16 @@ Iterative submissions, learning what actually moves the score:
 | v28 | Control: harmony-only + `MAX_CANDIDATES=150` (isolate v26's blank cause) | 13.500 |
 | v29 | **v27 + safety** (early-abort on inert injection, `REPLAY_SAFE`0.85, cap 1200) | 75.825 |
 | v30 | v29 + **per-candidate charged replay accounting** (`×1.03+0.05`, cap 0.99) | *pending* |
+| v31 | **90+ push: fused levers** — injection + effective-cost select + 0.994 sizing | *pending* |
+
+> **v31 fuses the best of two public high-scorers (2026-07-21).** Keeps our injection
+> engine (harmony + Gemma, v27 = 80.265) and layers on: (1) **effective-cost template
+> selection** `median_latency/fire_rate` (haodou) — pick the cheapest-per-fire template
+> per model; (2) **aggressive charged sizing** — `REPLAY_SAFE` 0.99→0.994, margins 45 s
+> / 1.20× (haodou), on top of v30's per-candidate charged accounting (tetsutani); (3)
+> `PROBE_REPS` 3→5 for steadier estimates; (4) v29 early-abort retained (no blank). All
+> 7 templates kept so each model auto-selects its best. Target 90+; v27's 80.265 stands,
+> so pure upside.
 
 > **v30 recovers the haircut (2026-07-21).** v29 proved the safety works (no blank) but
 > its blunt flat `REPLAY_SAFE`=0.85 cost ~4.4 points. v30 keeps the early-abort but
