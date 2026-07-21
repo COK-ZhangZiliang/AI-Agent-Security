@@ -172,19 +172,18 @@ Iterative submissions, learning what actually moves the score:
 | v26 | GPT-OSS harmony injection + online adaptive fill (measures the wall) | blank |
 | v27 | v26 **+ Gemma tool-call injection** (verified via real `apply_chat_template`) | **80.265** |
 | v28 | Control: harmony-only + `MAX_CANDIDATES=150` (isolate v26's blank cause) | 13.500 |
-| v29 | **v27 + safety** (early-abort on inert injection, `REPLAY_SAFE`0.85, cap 1200) | *pending* |
+| v29 | **v27 + safety** (early-abort on inert injection, `REPLAY_SAFE`0.85, cap 1200) | 75.825 |
 
-> **v29 hardens the 80 (2026-07-20).** Keeps v27's scoring engine (harmony + Gemma
-> injection + adaptive fill = 80.265) and adds three insurance mechanisms that only
-> reduce blank risk: (1) **early-abort** — if the selected template's probe fire-rate
-> < 0.5, injection is inert on this model (v26's Gemma case), so stop the fill instead
-> of spinning to the deadline (locally verified: aborts in 0.0 s on an inert agent);
-> (2) **`REPLAY_SAFE` 0.94→0.85** for replay-phase slack (`run()`'s budget is only the
-> generation phase; the gateway replays separately per guardrail); (3) **cap 2000→1200**
-> backstop. Root cause of v26's blank (verified): uncapped fill on a model where
-> injection is inert spins on slow fallbacks until a phase deadline → whole-submission
-> `INVALID_SUBMISSION`. v29 closes that hole; v27's 80.265 already stands, so this can
-> only help.
+> **v29 = 75.825 (2026-07-21): no-blank goal achieved, but ~4.4 below v27.** v29
+> completed reliably (the safety mechanisms work — no blank), confirming v26's blank
+> was the uncapped fill overrunning. But it scored 75.825 vs v27's 80.265: the
+> `REPLAY_SAFE` 0.94→0.85 haircut trimmed ~5.5% of candidates (80.265 × 0.94 ≈ 75.4,
+> matches). Early-abort and the 1200 cap likely didn't bite; the flat 0.85 haircut
+> did. **Next (v30):** replace the blunt 0.85 haircut with the public
+> `tetsutani/adaptive-tool-call-throughput` solution's *per-candidate* replay
+> accounting (`charge = elapsed × 1.03 + 0.05`, cap at 0.99×9000) — a precise cost
+> model that should keep v27's ~80 AND v29's no-blank safety, instead of sacrificing
+> ~4.4 points to a conservative flat cut.
 
 > **Control verdict (2026-07-20): v28 = 13.500, exactly `150 × 18 / 200`.** Harmony-only
 > capped at 150 candidates COMPLETES and scores — so the GPT-OSS/harmony side does

@@ -788,6 +788,29 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   kernel but cannot lower the recorded best.
 - Kernel push: `--accelerator NvidiaTeslaT4`.
 
+### v29 RESULT (checked 2026-07-21) — 75.825, no-blank achieved, ~4.4 below v27
+- v29 (ref 54847675, kernel v31) → **75.825**, COMPLETE (not blank). The safety
+  mechanisms work: reliable completion confirms v26's blank was the uncapped fill
+  overrunning a phase deadline (hypothesis A, already confirmed by v28, now
+  reinforced).
+- Cost of the safety: 75.825 vs v27's 80.265, down ~4.4. Diagnosis: the blunt
+  REPLAY_SAFE 0.94→0.85 haircut trimmed ~5.5% of candidates. 80.265 × (0.85/0.94) ≈
+  72.6; 80.265 × 0.94 ≈ 75.4 — the observed 75.825 matches the ~0.94-scale, i.e. the
+  fill packed proportionally fewer candidates. Early-abort and cap=1200 almost
+  certainly did NOT bite (v27 packed < 1200, and injection fires on both models so
+  early-abort never triggers). So the flat haircut alone cost the points.
+- LESSON: a flat REPLAY_SAFE cut is a crude way to reserve replay-phase slack. The
+  public tetsutani solution does it precisely: per-candidate charge =
+  elapsed × 1.03 + 0.05, ledger cap at 0.99 × 9000 = 8910. That models the real
+  per-candidate replay cost (incl. fixed overhead) instead of a blanket scale-down,
+  so it can run REPLAY_SAFE ~0.99 without overrunning.
+- NEXT (v30): keep v29's early-abort (cheap insurance, doesn't cost score) but
+  REPLACE the 0.85 flat haircut with per-candidate charged accounting
+  (elapsed×1.03+0.05, cap 0.99×9000). Expected: recover toward ~80 while keeping the
+  no-blank safety. This is the single highest-value borrow from tetsutani; paired-turn
+  is lower priority (unproven at high score, adds complexity).
+- Best recorded score remains v27 = 80.265 (still on the leaderboard).
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.
