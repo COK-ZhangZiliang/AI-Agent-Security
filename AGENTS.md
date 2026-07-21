@@ -811,7 +811,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   is lower priority (unproven at high score, adds complexity).
 - Best recorded score remains v27 = 80.265 (still on the leaderboard).
 
-### v30 — per-candidate charged replay accounting (ref TBD, kernel TBD, 2026-07-21)
+### v30 — per-candidate charged replay accounting (ref 54870262, kernel v32, 2026-07-21)
 - Implements the v29 NEXT step. Keeps v29's early-abort (MIN_FILL_FIRE_RATE=0.5,
   cheap insurance that never costs score) but REPLACES the blunt REPLAY_SAFE=0.85
   flat haircut with per-candidate charged accounting (borrowed from tetsutani):
