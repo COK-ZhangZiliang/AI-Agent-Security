@@ -863,6 +863,30 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   knob too aggressive (0.994 or 45 s margin), back off toward v30.
 - Kernel push: `--accelerator NvidiaTeslaT4`.
 
+### v30 + v31 RESULTS (checked 2026-07-23) — revised diagnosis
+- v30 (charged accounting, REPLAY_SAFE 0.99, cap 1200) -> **76.185**. Only +0.36 over
+  v29's 75.825 — charged accounting barely helped. This FALSIFIES the "flat haircut
+  was the main cost" theory: replacing 0.85 flat with charged 0.99 recovered almost
+  nothing.
+- v31 (fused: effective-cost select + REPLAY_SAFE 0.994 + margins 45/1.20 + PROBE 5)
+  -> **BLANK**. The aggressive sizing combo overran a phase deadline. Confirms the
+  "v31 blank -> a knob too aggressive" branch.
+- REVISED DIAGNOSIS of the ~4-point gap (v27 80.265 vs v29/v30 ~76): the likely
+  culprit is NOT the haircut and NOT charged accounting — it is the MAX_CANDIDATES
+  cap (2000 -> 1200) added in v29. v27 was uncapped and packed > 1200 candidates, so
+  the 1200 "safety cap" itself trims ~5% of the score. v30 kept cap=1200, which is
+  why charged accounting couldn't recover the gap.
+- KEY LESSON: of the v29 safety additions, only EARLY-ABORT is free (never costs
+  score, prevents the v26 blank). The MAX_CANDIDATES cap and conservative REPLAY_SAFE
+  both cost points; over-aggressive sizing (v31) blanks. The sweet spot is v27's
+  sizing (REPLAY_SAFE ~0.99, no/high candidate cap) + early-abort ONLY.
+- BEST remains v27 = 80.265 (uncapped, completes, on the leaderboard).
+- NEXT (v32): early-abort ONLY as the safety; restore v27-like sizing — REPLAY_SAFE
+  ~0.99 (not 0.994), MAX_CANDIDATES back to 2000 (or drop the cap), margins back to
+  60/1.35 (v27's proven-safe, since 45/1.20 contributed to v31's blank), keep charged
+  accounting (harmless, slightly conservative). Goal: match/beat 80.265 AND never
+  blank. Do NOT re-push aggressive sizing — v31 proved it blanks.
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.
