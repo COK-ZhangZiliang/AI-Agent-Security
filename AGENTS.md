@@ -887,6 +887,28 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   accounting (harmless, slightly conservative). Goal: match/beat 80.265 AND never
   blank. Do NOT re-push aggressive sizing — v31 proved it blanks.
 
+### v32 — STABLE 80+ (ref TBD, kernel TBD, 2026-07-27): v27 sizing + early-abort only
+- Implements the v32 NEXT plan exactly. From v31, reverted to v27's proven-safe
+  sizing and dropped every score-costing safety, keeping only the free one:
+  * MAX_CANDIDATES 1200 -> 2000 (uncap; this is the main gap recovery per v30 data).
+  * REPLAY_SAFE 0.994 -> 0.99; MARGIN_S 45 -> 60; MARGIN_MULT 1.20 -> 1.35;
+    PROBE_REPS 5 -> 3 (all back to v27 values; v31's aggressive set blanked).
+  * Template selection: effective-cost -> raw-per-second (v27's metric); removed the
+    now-dead _effective_cost helper.
+  * KEPT: early-abort (MIN_FILL_FIRE_RATE=0.5, free safety, prevents v26 blank) +
+    per-candidate charged accounting (harmless, slightly conservative reserve).
+- Rationale: v32 is v27 (=80.265, the proven best) plus TWO harmless additions
+  (early-abort + charged accounting). Expected: >= 80 and never blank. If v32 < 80,
+  the charged accounting's small reserve is the only remaining drag (drop it toward
+  raw elapsed). If v32 blanks, even v27-sizing + charged is over budget (unlikely;
+  v27 completed).
+- Local checks: compiles; constants restored (60/1.35/3/2000/0.99, cap 8910);
+  raw-per-second selection; no dead effective_cost/selected_cost; charged helper still
+  present; early-abort still aborts in 0.0 s on inert agent; 7 templates render;
+  notebook cell2 byte-identical.
+- v27's 80.265 stands on the leaderboard; v32 kernel overwrite cannot lower it.
+- Kernel push: `--accelerator NvidiaTeslaT4`.
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.

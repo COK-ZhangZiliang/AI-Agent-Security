@@ -175,6 +175,7 @@ Iterative submissions, learning what actually moves the score:
 | v29 | **v27 + safety** (early-abort on inert injection, `REPLAY_SAFE`0.85, cap 1200) | 75.825 |
 | v30 | v29 + **per-candidate charged replay accounting** (`×1.03+0.05`, cap 0.99) | 76.185 |
 | v31 | 90+ push: fused levers — injection + effective-cost select + 0.994 sizing | blank (timeout) |
+| v32 | **Stable 80+: v27 sizing + early-abort only** (uncap 2000, 0.99, 60/1.35) | *pending* |
 
 > **v30 = 76.185, v31 = blank (2026-07-23) — revised diagnosis.** Charged accounting
 > (v30) recovered only +0.36 over v29 (75.825), NOT the ~4.4 back to v27's 80.265. So
