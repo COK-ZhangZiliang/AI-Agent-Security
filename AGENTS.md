@@ -887,7 +887,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   accounting (harmless, slightly conservative). Goal: match/beat 80.265 AND never
   blank. Do NOT re-push aggressive sizing — v31 proved it blanks.
 
-### v32 — STABLE 80+ (ref TBD, kernel TBD, 2026-07-27): v27 sizing + early-abort only
+### v32 — STABLE 80+ (ref 55028009, kernel v34, 2026-07-27): v27 sizing + early-abort only
 - Implements the v32 NEXT plan exactly. From v31, reverted to v27's proven-safe
   sizing and dropped every score-costing safety, keeping only the free one:
   * MAX_CANDIDATES 1200 -> 2000 (uncap; this is the main gap recovery per v30 data).
