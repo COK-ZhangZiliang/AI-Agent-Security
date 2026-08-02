@@ -909,6 +909,29 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
 - v27's 80.265 stands on the leaderboard; v32 kernel overwrite cannot lower it.
 - Kernel push: `--accelerator NvidiaTeslaT4`.
 
+### v32 RESULT (checked 2026-08-03) — 83.160, NEW BEST, no blank
+- v32 (ref 55028009, kernel v34) -> **83.160**, COMPLETE. New best, beats v27 (80.265)
+  by ~2.9 AND completes reliably.
+- CONFIRMS the revised diagnosis: uncapping MAX_CANDIDATES (1200->2000) jumped the
+  score from v30's 76.185 to 83.160 (+7). The candidate cap was the ~4-point gap all
+  along, NOT the flat haircut. v30's charged accounting recovering only +0.36 was the
+  tell.
+- Bonus: v32 > v27 by ~2.9 despite same injection + sizing. The two harmless extras
+  (early-abort + per-candidate charged accounting) apparently make the fill land more
+  fully/stably than uncapped-v27 (e.g. avoiding a wasteful spin or a marginal
+  overrun-trim). So both additions are net-positive, not just safe.
+- CURRENT BEST CONFIG (lock this as the baseline): injection engine (harmony + Gemma,
+  7 templates, per-model auto-select) + v27 sizing (MAX_CANDIDATES 2000, REPLAY_SAFE
+  0.99, margins 60/1.35, PROBE_REPS 3, raw-per-second selection) + early-abort
+  (MIN_FILL_FIRE_RATE 0.5) + per-candidate charged accounting (x1.03+0.05).
+- NEXT ideas to push past 83 (all incremental, keep v32 as the safe floor):
+  * Leaderboard top is ~102-105; 83 is a strong mid-high. The remaining headroom is
+    likely in the PRIVATE cells (persistent_provenance guardrail, unseen) and/or
+    higher fire-rate injection variants. Any experiment must keep v32's no-blank
+    sizing untouched (v31 proved aggressive sizing blanks) — vary ONE thing (e.g. add
+    an injection template variant) and compare.
+  * Do NOT touch MAX_CANDIDATES/REPLAY_SAFE/margins again — v32's values are proven.
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.

@@ -175,7 +175,15 @@ Iterative submissions, learning what actually moves the score:
 | v29 | **v27 + safety** (early-abort on inert injection, `REPLAY_SAFE`0.85, cap 1200) | 75.825 |
 | v30 | v29 + **per-candidate charged replay accounting** (`×1.03+0.05`, cap 0.99) | 76.185 |
 | v31 | 90+ push: fused levers — injection + effective-cost select + 0.994 sizing | blank (timeout) |
-| v32 | **Stable 80+: v27 sizing + early-abort only** (uncap 2000, 0.99, 60/1.35) | *pending* |
+| v32 | **Stable 80+: v27 sizing + early-abort only** (uncap 2000, 0.99, 60/1.35) | **83.160** |
+
+> **v32 = 83.160 — new best, and it completes (2026-08-03).** Uncapping
+> `MAX_CANDIDATES` (1200→2000) jumped the score from v30's 76.185 to 83.160 (+7),
+> confirming the cap was the ~4-point gap all along (not the haircut). v32 also beats
+> the prior best v27 (80.265) by ~2.9: the two harmless additions (early-abort +
+> per-candidate charged accounting) not only avoid blanks but appear to make the fill
+> land more fully/stably than uncapped-v27. **Current best config: v27's injection +
+> sizing, uncapped, with early-abort + charged accounting as the only extras.**
 
 > **v30 = 76.185, v31 = blank (2026-07-23) — revised diagnosis.** Charged accounting
 > (v30) recovered only +0.36 over v29 (75.825), NOT the ~4.4 back to v27's 80.265. So
