@@ -932,7 +932,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
     an injection template variant) and compare.
   * Do NOT touch MAX_CANDIDATES/REPLAY_SAFE/margins again — v32's values are proven.
 
-### v33 — 90 PUSH: stronger harmony exemplar (ref TBD, kernel TBD, 2026-08-03)
+### v33 — 90 PUSH: stronger harmony exemplar (ref 55190486, kernel v35, 2026-08-03)
 - Follows the v32 NEXT plan exactly: sizing FROZEN at v32's proven-safe values, vary
   ONE thing — add a higher-fire-rate injection template. Only safe lever toward 90.
 - Added ONE template: harmony_fullcall — a FULL, parser-valid harmony tool-call
