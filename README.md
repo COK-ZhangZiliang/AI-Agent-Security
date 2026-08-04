@@ -176,7 +176,18 @@ Iterative submissions, learning what actually moves the score:
 | v30 | v29 + **per-candidate charged replay accounting** (`×1.03+0.05`, cap 0.99) | 76.185 |
 | v31 | 90+ push: fused levers — injection + effective-cost select + 0.994 sizing | blank (timeout) |
 | v32 | **Stable 80+: v27 sizing + early-abort only** (uncap 2000, 0.99, 60/1.35) | **83.160** |
-| v33 | 90 push: v32 + **`harmony_fullcall`** valid tool-call exemplar (higher fire-rate) | *pending* |
+| v33 | 90 push: v32 + **`harmony_fullcall`** valid tool-call exemplar (higher fire-rate) | 83.430 |
+
+> **v33 = 83.430 — marginal +0.27 over v32, new best but a ceiling signal (2026-08-04).**
+> The stronger harmony exemplar barely moved the needle, which means GPT-OSS fire-rate
+> was already near-saturated (harmony_analysis was already good enough). So the ~6.5
+> gap to 90 is NOT in GPT-OSS reliability — it is almost certainly in cells we can't
+> tune from the template side: the **Gemma cells** (if Gemma injection fires less
+> reliably than GPT-OSS harmony) and the **private-guardrail cells** (a stricter
+> unseen ruleset that may block some candidates). More GPT-OSS templates won't close
+> it; the next real lever is a stronger/again-verified Gemma injection or a
+> private-guardrail-aware trace — both higher-effort, model-behavior-dependent, and
+> only checkable online. Current best config stays v33 (= v32 + fullcall).
 
 > **v32 = 83.160 — new best, and it completes (2026-08-03).** Uncapping
 > `MAX_CANDIDATES` (1200→2000) jumped the score from v30's 76.185 to 83.160 (+7),
