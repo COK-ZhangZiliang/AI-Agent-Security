@@ -177,6 +177,17 @@ Iterative submissions, learning what actually moves the score:
 | v31 | 90+ push: fused levers — injection + effective-cost select + 0.994 sizing | blank (timeout) |
 | v32 | **Stable 80+: v27 sizing + early-abort only** (uncap 2000, 0.99, 60/1.35) | **83.160** |
 | v33 | 90 push: v32 + **`harmony_fullcall`** valid tool-call exemplar (higher fire-rate) | 83.430 |
+| v34 | 90 push: v33 + **untimed warm-up** (unspike `slowest` → more fill capacity) | *pending* |
+
+> **v34 = untimed warm-up (2026-08-05).** Studying `nctuan/jed-v25` confirmed this
+> method is fire-rate-bound at **~84±5** (a lottery — their words: "best-of PUBLIC,
+> re-roll and keep the high roll"), and surfaced one sizing-safe lever we lacked. Our
+> prior warm-up ran through the *timed* `trial()` path, so the GGUF model-load cost
+> (75–146 s) inflated `slowest` and made the whole fill over-reserve, choking candidate
+> count. v34 makes the warm-up **untimed + stats-free** so `slowest` reflects true
+> per-candidate latency → more candidates fit. Sizing byte-identical to v32/v33.
+> Expected ~84–85; 90 is a high-roll/stretch (we're near this family's ceiling).
+> (Confirmed our engine already does validation-fill + charged accounting — not gaps.)
 
 > **v33 = 83.430 — marginal +0.27 over v32, new best but a ceiling signal (2026-08-04).**
 > The stronger harmony exemplar barely moved the needle, which means GPT-OSS fire-rate

@@ -984,6 +984,54 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   leaderboard.
 - Kernel push: `--accelerator NvidiaTeslaT4`.
 
+### nctuan/jed-v25 research (2026-08-05) — a more-evolved sibling; ~84 ceiling confirmed
+- Studied nctuan/jed-v25 (public). Same family as ours (single-hop SECRET_MARKER
+  exfil + injection + live fill). Its own markdown says it plainly:
+  "the engine is fire-rate-bound (~84±5) — best-of PUBLIC, so re-roll and keep the
+  high roll." This CONFIRMS our read: this method's ceiling is ~84 and the score is
+  a noisy lottery around it (our v32=83.16, v33=83.43 are on that plateau). 90 needs
+  a high roll or a structurally different lever.
+- HONEST correction to a first-pass over-claim: nctuan's headline "validation-fill
+  (keep only fired)" is NOT a gap for us — our engine already does exactly that (the
+  fill loop runs trial() on the live env and appends only `if fired`). Charged replay
+  accounting: also already ours. So those are not borrows.
+- REAL deltas nctuan has that we don't:
+  A. UNTIMED WARM-UP before the timed fill. It notes model-load is 75-146 s on the
+     GGUF backend. In OUR engine that load cost lands on the first probe, inflating
+     `slowest`, which inflates our per-fill reserve (max(60, slowest*1.35)) for the
+     WHOLE fill -> chokes candidate count. A one-time untimed warm-up absorbs the
+     load so `slowest` reflects true per-candidate latency -> more candidates fit.
+     THIS is the highest-value, sizing-safe borrow.
+  B. Per-model adaptive margin (_adaptive_margin: reserve scales with observed
+     slowest instead of a flat floor) — secondary; reclaims cushion for a fast model.
+  C. classify-then-fix-template (8 samples, latency threshold 12 s -> FRAME vs
+     TEMPLATE). We already select per-model via probes; marginal.
+- NEXT (v34): add the untimed warm-up (borrow A). Sizing-safe (doesn't touch
+  MAX_CANDIDATES/REPLAY_SAFE/margins), directly lifts fill capacity by removing the
+  model-load spike from `slowest`. Expected: 84-85 range, still lottery-bound;
+  90 remains a stretch/high-roll. Do NOT touch sizing (v31 blank lesson stands).
+
+### v34 — untimed warm-up (ref TBD, kernel TBD, 2026-08-05): borrow A from nctuan
+- Implements nctuan borrow A. Our prior warm-up called trial() (TIMED), so the GGUF
+  model-load cost inflated `slowest`; clearing latency lists did NOT undo the
+  `slowest` inflation, so the whole fill over-reserved max(MARGIN_S, slowest*1.35)
+  and packed fewer candidates. v34 replaces it with ONE untimed, stats-free
+  env.reset()+interact() that only pays the model-load cost (no timing, no `slowest`
+  update, no bank/latency writes). Then the normal probes/fill run with a `slowest`
+  that reflects true per-candidate latency.
+- Sizing byte-identical to v32/v33 (MARGIN_S 60, MULT 1.35, PROBE_REPS 3, cap 2000,
+  REPLAY_SAFE 0.99, charged accounting, early-abort, 8 templates incl. harmony_fullcall
+  + both gemma). Only the warm-up mechanism changed -> no new blank risk.
+- Local checks: compiles; 8 templates render; warm-up runs untimed without crashing;
+  fill + early-abort intact on inert agent (0.0 s, fallback); sizing constants
+  unchanged; notebook cell2 byte-identical.
+- Expected: ~84-85 (still fire-rate-bound lottery per nctuan); a clean +1-2 if the
+  model-load spike was indeed choking our fill, or ~flat if the previous list-clear
+  already mostly mitigated it. 90 is a high-roll. No blank expected.
+- v33's 83.430 is the current best on the leaderboard; v34 kernel overwrite can't
+  lower it.
+- Kernel push: `--accelerator NvidiaTeslaT4`.
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.
