@@ -1032,7 +1032,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   lower it.
 - Kernel push: `--accelerator NvidiaTeslaT4`.
 
-### v35 — 90+ ATTEMPT: multi-hop injection arm (ref TBD, kernel TBD, 2026-08-05)
+### v35 — 90+ ATTEMPT: multi-hop injection arm (ref 55264432, kernel v37, 2026-08-05)
 - The first STRUCTURAL attempt past the single-hop ~84 ceiling (not a param tweak).
 - Scoring re-derived + verified this session: leaderboard = SUM of 4 cells
   (gpt_oss/gemma x public/private); each cell = 0.09 * fired-candidates single-hop
