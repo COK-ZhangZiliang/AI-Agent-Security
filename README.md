@@ -178,6 +178,18 @@ Iterative submissions, learning what actually moves the score:
 | v32 | **Stable 80+: v27 sizing + early-abort only** (uncap 2000, 0.99, 60/1.35) | **83.160** |
 | v33 | 90 push: v32 + **`harmony_fullcall`** valid tool-call exemplar (higher fire-rate) | 83.430 |
 | v34 | 90 push: v33 + **untimed warm-up** (unspike `slowest` → more fill capacity) | *pending* |
+| v35 | **90+ attempt: multi-hop injection arm** (16K+2 raw/candidate, upside-only) | *pending* |
+
+> **v35 = the structural 90+ attempt (2026-08-05).** Re-derived scoring: leaderboard =
+> SUM of 4 cells; single-hop tops ~84 (throughput-bound). Verified lever: a candidate
+> firing K `http.post` across K hops = **16K+2 raw** (vs single-hop 18), which beats
+> single-hop per replay-cost whenever there's fixed per-candidate overhead — the likely
+> edge of the ~110 leaders. (Multiple calls in one turn raise `InvalidModelOutputError`,
+> so K must come one-per-hop across the loop.) v25's naive multi-hop scored 3.94 because
+> a plain instruction won't make the model loop; v35 uses **injection** (forge the
+> analysis/model turn + numbered per-step list). Added as two extra probe arms
+> (`multihop_harmony`, `multihop_gemma`): the adaptive probe selects them only if they
+> truly fire K>1, else falls back to v34 — **upside-only, sizing byte-identical.**
 
 > **v34 = untimed warm-up (2026-08-05).** Studying `nctuan/jed-v25` confirmed this
 > method is fire-rate-bound at **~84±5** (a lottery — their words: "best-of PUBLIC,
