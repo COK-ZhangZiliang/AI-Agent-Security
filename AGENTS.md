@@ -1011,7 +1011,7 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   model-load spike from `slowest`. Expected: 84-85 range, still lottery-bound;
   90 remains a stretch/high-roll. Do NOT touch sizing (v31 blank lesson stands).
 
-### v34 — untimed warm-up (ref TBD, kernel TBD, 2026-08-05): borrow A from nctuan
+### v34 — untimed warm-up (ref 55263659, kernel v36, 2026-08-05): borrow A from nctuan
 - Implements nctuan borrow A. Our prior warm-up called trial() (TIMED), so the GGUF
   model-load cost inflated `slowest`; clearing latency lists did NOT undo the
   `slowest` inflation, so the whole fill over-reserved max(MARGIN_S, slowest*1.35)
