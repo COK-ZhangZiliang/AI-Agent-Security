@@ -1120,7 +1120,7 @@ the forums CLI works). Author MartynaPlomecka. Three changes + a warning:
     cp312-Linux grpcio_tools wheel at import -> fails on our macOS/py3.11 (can't
     construct the inference server locally) but WORKS on Kaggle (Linux/py3.12). Not a
     submission blocker; attack.py (the scored part) validates fine locally.
-- STEP 2 = v36 (ref TBD, kernel TBD): ROBUST no-token-injection variant. Same engine
+- STEP 2 = v36 (ref 55478598, kernel v39): ROBUST no-token-injection variant. Same engine
   (adaptive fill / charged accounting / early-abort / untimed warm-up / v27 sizing);
   TEMPLATES reduced to NATURAL-LANGUAGE ONLY (verified zero control tokens across all
   arms): plain/bare/bare_ok/imperative (single post) + multihop_plain (a plain numbered
