@@ -38,3 +38,4 @@ image.png
 # Local pull-downs and old run artifacts
 v4_out/
 logs/
+.comp_data_0622_backup/

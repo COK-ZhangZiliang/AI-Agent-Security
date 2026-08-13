@@ -1069,6 +1069,47 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
   best.
 - Kernel push: `--accelerator NvidiaTeslaT4`.
 
+### OFFICIAL EVALUATION UPDATE #2 (discussion 733058, 2026-08-05) — GAME-CHANGER
+Fetched via `kaggle forums topics show 733058` (WebFetch only returns the title;
+the forums CLI works). Author MartynaPlomecka. Three changes + a warning:
+1. **Partial scores preserved on replay timeout.** Re-downloaded the 08-05 data and
+   diffed vs our 6-22 SDK. `aicomp_sdk/` is BYTE-IDENTICAL (scoring/predicates/agents
+   unchanged); ALL changes are in `kaggle_evaluation/` (the gateway/harness). The new
+   `_replay_and_score` checks `time.monotonic() >= replay_deadline_s` at every step
+   and `break`s (sets timed_out), then returns `summarize_attack_findings(validated_
+   findings)` from whatever accumulated — NO more raise. Even the GENERATION phase now
+   returns `completed_candidates` on timeout ("preserving N ... candidates") instead of
+   raising. **=> The entire "timeout -> blank/INVALID_SUBMISSION" failure mode that
+   shaped v8-v31 is ELIMINATED.** DEFAULT_BUDGET_S 9000 -> 8750; per-phase deadlines
+   now cap the score at what fired, not zero it.
+2. **More robust tool-call parsing** (Gemma `{}`-wrapped calls normalized). BUT the
+   fix is in the harness, NOT aicomp_sdk (gemma4_agent.py unchanged). Multiple forum
+   users (Renee, Syed Asad Ali) report Gemma STILL only completes 1 of N sequential
+   http.post calls after the fix — so multi-hop on Gemma likely still doesn't loop.
+3. **Leaderboard invalidated + reset.** Only 2 reruns/team offered, selection deadline
+   was 2026-08-07 9am PT (MISSED — it's 08-13). Default = auto-rerun our 2 highest
+   public subs. As of now ALL our submissions show status=ERROR / publicScore=None via
+   the API => we have NO live score on the refreshed board. Top is now ~137/126/116
+   (was ~110 pre-reset). The field advanced.
+4. **WARNING (aimed at us):** "submissions that rely on implementation-specific
+   behavior of the evaluation harness rather than a security-relevant failure ... may
+   not carry over to the final rankings." Our harmony/gemma TOKEN INJECTION (v26-v35)
+   is exactly "harness-specific." STRATEGIC RISK: the final-ranking evaluation may not
+   credit token-forgery attacks. Robust path = attacks through the documented interface
+   (natural user messages), not forged chat-template control tokens.
+- LOCAL STATE: swapped fresh 08-05 SDK into comp_data/; 6-22 backup at
+  `.comp_data_0622_backup/` (git-ignored). All prior local reasoning about
+  "timeout=blank" is now STALE — re-validate against the new gateway.
+- IMPLICATIONS FOR NEXT VERSION:
+  * Timeout no longer catastrophic -> we can push candidate count / multi-hop harder
+    WITHOUT the blank risk that forced conservative sizing (v29-v32). The old
+    "aggressive sizing blanks" lesson (v31) is REVERSED under the new harness.
+  * But re-verify: does the new gateway still hard-cap the attack phase? Yes — attack
+    (generation) timeout terminates but preserves completed candidates; replay timeout
+    preserves partial score. So worst case a too-big submission just scores what fit.
+  * Consider de-risking against the harness warning: keep a variant that fires via
+    plain natural-language user messages (no token forgery) as a robust fallback.
+
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.
@@ -1091,5 +1132,8 @@ The 3.1.0 → 3.1.2 upgrade changed TWO independent things, both validated local
 
 ### Username / artifacts
 - Username: ziliangcok. Kernel: ziliangcok/attack-multistep-tool-attacks.
-- Active SDK: 3.1.2 (comp_data/).
+- Active SDK: 3.1.2 **08-05 harness build** (comp_data/, re-downloaded 2026-08-13;
+  aicomp_sdk unchanged from 6-22, kaggle_evaluation harness updated: partial-score
+  on timeout, DEFAULT_BUDGET_S 8750).
+- Backup of 6-22 SDK: `.comp_data_0622_backup/` (git-ignored).
 - Backup of 3.1.0: `.comp_data_310_backup/` (git-ignored).
