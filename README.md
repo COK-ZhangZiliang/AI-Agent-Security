@@ -179,6 +179,18 @@ Iterative submissions, learning what actually moves the score:
 | v33 | 90 push: v32 + **`harmony_fullcall`** valid tool-call exemplar (higher fire-rate) | 83.430 |
 | v34 | 90 push: v33 + **untimed warm-up** (unspike `slowest` → more fill capacity) | *pending* |
 | v35 | **90+ attempt: multi-hop injection arm** (16K+2 raw/candidate, upside-only) | *pending* |
+| v36 | **ROBUST: no token injection** (natural-language only, hedges harness warning) | *pending* |
+
+> **08-05 evaluation overhaul + v36 robust hedge (2026-08-13).** Official discussion
+> 733058: the harness now **preserves partial score on replay/generation timeout**
+> (diff-confirmed — the "timeout = blank" mode that shaped v8–v31 is gone;
+> `DEFAULT_BUDGET_S` 9000→8750), the leaderboard was **reset**, and Kaggle **warned that
+> harness-specific attacks may not carry to final rankings**. Our token-forgery injection
+> (v26–v35) is exactly that. **v36** keeps the proven fill engine but uses **only
+> natural-language user messages (zero control tokens)** — `plain`/`bare`/`bare_ok`/
+> `imperative` + a plain `multihop_plain` numbered instruction — a genuine documented-
+> interface attack that should carry to the final evaluation. Also resubmitted v35 under
+> the new harness to reclaim a live score and test whether token injection still fires.
 
 > **v35 = the structural 90+ attempt (2026-08-05).** Re-derived scoring: leaderboard =
 > SUM of 4 cells; single-hop tops ~84 (throughput-bound). Verified lever: a candidate
