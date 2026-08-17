@@ -1138,6 +1138,35 @@ the forums CLI works). Author MartynaPlomecka. Three changes + a warning:
     harness means even a partial multihop just caps, never blanks. So v36 should land a
     solid non-zero robust score; may be below the injection peak but far more defensible.
 
+### STEP 1 + STEP 2 RESULTS (checked 2026-08-17, under 08-05 eval)
+- v35 (injection, ref 55478429) -> **74.000** (was 83.755 pre-reset). Injection STILL
+  WORKS under the patched harness but is weaker by ~10 pts — the more-robust Gemma
+  parsing likely trimmed the gemma cells; GPT-OSS harmony largely survives.
+- v36 (robust, zero control tokens, ref 55478598) -> **62.010**. A pure documented-
+  interface attack (natural-language only) floors at 62 — defensible if the final
+  ranking discredits token forgery.
+- Delta = 12 pts = the net value of token injection over plain natural language under
+  the new eval. Real but smaller than pre-reset.
+- Both COMPLETE, no blank — confirms the partial-score harness (pushing count is safe).
+
+### v37 — EVOLVE: best-of-both + throughput push (ref TBD, kernel TBD, 2026-08-17)
+- Thesis: v35's probe already keeps plain arms as fallback AND injection arms where
+  they win, so its 74 is effectively best-of-both on the CURRENT template set. To beat
+  74 under the new partial-score harness, exploit two now-safe levers:
+  1. THROUGHPUT: timeouts no longer blank (verified), so raise the effective candidate
+    budget — DEFAULT_BUDGET_S is 8750 and replay caps at partial score, so a bigger
+    fill can only help. Re-check MAX_CANDIDATES/REPLAY_SAFE are not under-filling.
+  2. Keep ALL arms (v35 injection set + v36 natural-language arms incl. imperative +
+    multihop_plain) in ONE probe so each model/cell picks its best-firing template;
+    the union strictly dominates either subset.
+- Plan: merge v35 + v36 template unions (dedup), keep sizing, and (optional) relax the
+  fill's own wall-clock reserve now that overrun no longer zeros the row. Single online
+  experiment; probe self-selects, so union can only match-or-beat 74.
+- HONEST: this is incremental (74 -> maybe high-70s/80). The ~110-137 leaders likely
+  have a structurally different edge we haven't cracked; but best-of-both + safe
+  throughput is the right next step and preserves the robust 62 fallback.
+
+### Truths to relearn next time we look
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.

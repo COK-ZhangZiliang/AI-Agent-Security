@@ -178,8 +178,8 @@ Iterative submissions, learning what actually moves the score:
 | v32 | **Stable 80+: v27 sizing + early-abort only** (uncap 2000, 0.99, 60/1.35) | **83.160** |
 | v33 | 90 push: v32 + **`harmony_fullcall`** valid tool-call exemplar (higher fire-rate) | 83.430 |
 | v34 | 90 push: v33 + **untimed warm-up** (unspike `slowest` → more fill capacity) | *pending* |
-| v35 | **90+ attempt: multi-hop injection arm** (16K+2 raw/candidate, upside-only) | *pending* |
-| v36 | **ROBUST: no token injection** (natural-language only, hedges harness warning) | *pending* |
+| v35 | multi-hop injection arm, resubmitted under 08-05 eval | **74.000** (was 83.7 pre-reset) |
+| v36 | **ROBUST: no token injection** (natural-language only) | **62.010** |
 
 > **08-05 evaluation overhaul + v36 robust hedge (2026-08-13).** Official discussion
 > 733058: the harness now **preserves partial score on replay/generation timeout**
@@ -191,6 +191,14 @@ Iterative submissions, learning what actually moves the score:
 > `imperative` + a plain `multihop_plain` numbered instruction — a genuine documented-
 > interface attack that should carry to the final evaluation. Also resubmitted v35 under
 > the new harness to reclaim a live score and test whether token injection still fires.
+
+> **Results under the 08-05 eval (2026-08-17):** v35 (injection) = **74.0** (down from
+> 83.7 pre-reset — the more-robust Gemma parsing weakened, but did NOT kill, injection),
+> v36 (robust, zero tokens) = **62.0**. Takeaways: (1) token injection still works and
+> is worth ~12 pts over pure natural language; (2) even a fully documented-interface
+> attack floors at **62** — a defensible score if the final ranking discredits injection.
+> Next: keep both arms in one adaptive probe (best-of-both) and exploit the new
+> partial-score harness to push candidate throughput past 74.
 
 > **v35 = the structural 90+ attempt (2026-08-05).** Re-derived scoring: leaderboard =
 > SUM of 4 cells; single-hop tops ~84 (throughput-bound). Verified lever: a candidate
