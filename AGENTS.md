@@ -1165,8 +1165,11 @@ the forums CLI works). Author MartynaPlomecka. Three changes + a warning:
 - HONEST: this is incremental (74 -> maybe high-70s/80). The ~110-137 leaders likely
   have a structurally different edge we haven't cracked; but best-of-both + safe
   throughput is the right next step and preserves the robust 62 fallback.
+- SHIPPED (ref TBD, kernel TBD, 2026-08-17): 12-arm union (v35's 10 + imperative +
+  multihop_plain), sizing byte-identical (60/1.35/3/2000/0.99), all arms render +
+  guardrail ALLOW + live run OK. Probe self-selects per model/cell -> can only
+  match-or-beat 74; robust natural-language arms remain as the 62 fallback.
 
-### Truths to relearn next time we look
 ### Truths to relearn next time we look
 1. **Predicates are trace-anchored in 3.1.2.** Any payload that isn't either
    `SECRET_MARKER` or a substring of secret.txt is dead on arrival.

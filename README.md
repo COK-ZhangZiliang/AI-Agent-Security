@@ -180,6 +180,7 @@ Iterative submissions, learning what actually moves the score:
 | v34 | 90 push: v33 + **untimed warm-up** (unspike `slowest` → more fill capacity) | *pending* |
 | v35 | multi-hop injection arm, resubmitted under 08-05 eval | **74.000** (was 83.7 pre-reset) |
 | v36 | **ROBUST: no token injection** (natural-language only) | **62.010** |
+| v37 | **Best-of-both**: v35 injection arms + v36 natural-language arms in one probe | *pending* |
 
 > **08-05 evaluation overhaul + v36 robust hedge (2026-08-13).** Official discussion
 > 733058: the harness now **preserves partial score on replay/generation timeout**
